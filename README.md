@@ -154,6 +154,7 @@ ML/
 ├── requirements.txt          # Dependências do projeto
 ├── ai_impact_model.joblib    # Modelo treinado (RandomForest) - Git LFS
 ├── ai_job_trends_dataset.csv # Dataset utilizado para treinamento
+├── GS_ML_Impacto_da_IA_no_Mercado_de_Trabalho.ipynb  # Notebook Jupyter com análise e treinamento
 ├── setup.bat                 # Script de configuração (Windows)
 ├── run_app.bat              # Script de execução (Windows)
 ├── .gitattributes            # Configuração Git LFS para arquivos grandes
