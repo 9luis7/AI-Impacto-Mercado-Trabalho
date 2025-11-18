@@ -152,13 +152,17 @@ O modelo identificou que os fatores mais importantes para determinar o impacto d
 ML/
 ├── app.py                    # Aplicativo principal Streamlit
 ├── requirements.txt          # Dependências do projeto
-├── ai_impact_model.joblib    # Modelo treinado (RandomForest)
+├── ai_impact_model.joblib    # Modelo treinado (RandomForest) - Git LFS
 ├── ai_job_trends_dataset.csv # Dataset utilizado para treinamento
 ├── setup.bat                 # Script de configuração (Windows)
 ├── run_app.bat              # Script de execução (Windows)
+├── .gitattributes            # Configuração Git LFS para arquivos grandes
+├── .gitignore               # Arquivos ignorados pelo Git
 ├── venv/                     # Ambiente virtual (criado automaticamente)
 └── README.md                 # Documentação do projeto
 ```
+
+> **Nota**: O arquivo `ai_impact_model.joblib` é gerenciado pelo **Git LFS** (Large File Storage) devido ao seu tamanho. Ao clonar o repositório, certifique-se de ter o Git LFS instalado. Se o arquivo não baixar automaticamente, execute: `git lfs pull`
 
 ---
 
@@ -180,6 +184,13 @@ ML/
 ### Arquivo do modelo não encontrado
 - Certifique-se de que o arquivo `ai_impact_model.joblib` está na raiz do projeto
 - Verifique se o arquivo não foi corrompido ou movido
+- Se você clonou o repositório, o arquivo pode estar no Git LFS. Execute: `git lfs pull`
+
+### Problemas com Git LFS
+- O arquivo do modelo é grande (160 MB) e usa Git LFS
+- Para clonar o repositório com os arquivos LFS: `git clone` (Git LFS baixa automaticamente)
+- Se o arquivo não baixar: `git lfs install` e depois `git lfs pull`
+- Instale o Git LFS: https://git-lfs.github.com/
 
 ---
 
