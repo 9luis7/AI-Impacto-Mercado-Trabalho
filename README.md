@@ -18,27 +18,121 @@ Aplicativo web interativo desenvolvido com **Streamlit** e **Machine Learning** 
 
 Desenvolver e treinar um modelo de **Machine Learning** capaz de analisar as características de uma profissão (Indústria, Salário, Educação, Experiência) para prever seu nível de impacto pela IA.
 
-O modelo utiliza um **RandomForestClassifier** treinado com 24.000 amostras e validado em 6.000 amostras de teste, atingindo **96% de acurácia** na classificação do impacto da IA em diferentes profissões.
-
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 📖 Jornada do Projeto: Da Análise aos Resultados Interpretáveis
 
-- **Python 3.11+** - Linguagem de programação
-- **Streamlit** - Framework web para interface interativa
-- **scikit-learn** - Biblioteca de Machine Learning
-- **pandas** - Manipulação e análise de dados
-- **numpy** - Operações numéricas
-- **matplotlib & seaborn** - Visualização de dados
-- **joblib** - Serialização de modelos
+### 1. 📊 Análise Exploratória de Dados (EDA)
 
----
+O projeto começou com uma **análise exploratória profunda** do dataset `ai_job_trends_dataset.csv`, contendo 30.000 registros de profissões. Durante a EDA, identificamos padrões cruciais:
 
-## 📋 Requisitos
+#### Descobertas Principais:
 
-- Python 3.11 ou superior
-- Ambiente virtual (venv) - será criado automaticamente
-- Sistema Operacional: Windows (scripts .bat incluídos)
+- **Distribuição Balanceada**: O dataset possui três classes de impacto (Low, Moderate, High) com distribuição equilibrada (~10.000 amostras cada)
+- **Correlações Identificadas**: Análise de correlação revelou relações entre salário, experiência e risco de automação
+- **Padrões por Indústria**: Visualizações mostraram que certas indústrias (IT, Manufacturing) apresentam perfis distintos de automação
+- **Insight Crítico**: Descobrimos que **Indústria** e **Nível de Educação** são os fatores mais determinantes, enquanto salário e experiência têm menor impacto relativo
+
+> 📓 **Notebook Jupyter**: Todo o processo de EDA, visualizações e descobertas está documentado em `GS_ML_Impacto_da_IA_no_Mercado_de_Trabalho.ipynb`
+
+### 2. 🧠 Aprendizado Não Supervisionado (Clustering)
+
+Antes de construir o modelo preditivo, utilizamos **KMeans Clustering** para validar se os padrões identificados na EDA poderiam ser "descobertos" automaticamente pelo algoritmo:
+
+- **Método do Cotovelo**: Confirmou que **K=3** é o número ideal de clusters
+- **Validação Cruzada**: Os clusters formados pelo KMeans corresponderam fortemente às três categorias de impacto da IA
+- **Interpretação**: Cada cluster revelou um perfil distinto de profissões (alto/baixo risco de automação)
+
+Esta etapa validou que os padrões observados na EDA não eram aleatórios, mas sim padrões reais e identificáveis pelos algoritmos de ML.
+
+### 3. 🎯 Modelagem: Construção do Modelo Preditivo
+
+Com base nas descobertas da EDA e validação do clustering, construímos um **pipeline de Machine Learning** completo:
+
+#### Features Selecionadas (baseadas na EDA):
+- **Industry** (Categórica) - Identificada como fator crítico
+- **Required Education** (Categórica) - Identificada como fator crítico  
+- **Median Salary (USD)** (Numérica) - Fator secundário
+- **Experience Required (Years)** (Numérica) - Fator secundário
+- **Remote Work Ratio (%)** (Numérica) - Fator complementar
+
+#### Pipeline de Pré-processamento:
+- **Features Categóricas**: `OneHotEncoder` para transformar em variáveis numéricas
+- **Features Numéricas**: `StandardScaler` para normalização
+- **Modelo**: `RandomForestClassifier` (100 árvores, random_state=42)
+
+#### Divisão dos Dados:
+- **Treinamento**: 24.000 amostras (80%)
+- **Validação**: 6.000 amostras (20%)
+- **Estratificação**: Mantida a proporção das classes
+
+### 4. ✅ Validação e Performance
+
+O modelo foi rigorosamente validado no conjunto de teste:
+
+#### Métricas de Performance:
+- **Acurácia**: **96%** 
+- **Precisão Média**: Alta performance em todas as classes
+- **Recall**: Boa capacidade de identificar corretamente cada nível de impacto
+- **Matriz de Confusão**: Visualização mostra poucos erros de classificação
+
+#### Feature Importance (Validação das Descobertas da EDA):
+A análise de importância das features confirmou as descobertas da EDA:
+1. **Indústria** - Fator mais importante
+2. **Nível de Educação** - Segundo fator mais importante
+3. **Salário e Experiência** - Fatores secundários
+4. **Trabalho Remoto** - Fator complementar
+
+> ✅ **Validação**: O modelo não apenas aprendeu os padrões, mas confirmou que as hipóteses levantadas na EDA eram corretas.
+
+### 5. 💾 Exportação e Implementação
+
+O pipeline completo (pré-processamento + modelo) foi exportado como `ai_impact_model.joblib` usando `joblib`, permitindo:
+
+- **Reutilização**: Carregar o modelo treinado sem retreinar
+- **Consistência**: Garantir que novos dados passem pelo mesmo pré-processamento
+- **Portabilidade**: Usar o modelo em diferentes ambientes (Colab → Streamlit)
+
+### 6. 🎨 Aplicação Interativa: Transformando Resultados em Insights
+
+A aplicação Streamlit foi desenvolvida para tornar os resultados do modelo **interpretáveis e acessíveis**:
+
+#### Aba 1: Previsor Interativo
+- **Input do Usuário**: Permite inserir características de uma profissão
+- **Previsão em Tempo Real**: O modelo retorna o nível de impacto (Low/Moderate/High)
+- **Nível de Confiança**: Gráfico de barras mostra a probabilidade para cada classe
+- **Interpretação Visual**: Cores (🟢🟡🔴) facilitam a compreensão imediata
+
+#### Aba 2: Validação do Modelo
+- **Matriz de Confusão**: Visualização da performance do modelo
+- **Métricas Detalhadas**: Acurácia, Precisão, Recall por classe
+- **Feature Importance**: Gráfico mostrando quais fatores o modelo mais considera
+- **Transparência**: Usuário entende como o modelo toma decisões
+
+#### Aba 3: O Padrão nos Dados
+- **Insights da EDA**: Apresenta os padrões descobertos durante a análise
+- **Comparação Estatística**: Mostra diferenças entre profissões de alto e baixo risco
+- **Validação de Intuição**: Permite ao usuário testar se consegue "desafiar" o modelo
+
+### 7. 🔄 Fluxo Completo: Da Análise ao Resultado
+
+```
+Dataset (30k amostras)
+    ↓
+[EDA] → Descoberta de Padrões
+    ↓
+[Clustering] → Validação dos Padrões
+    ↓
+[Modelagem] → Treinamento do RandomForest
+    ↓
+[Validação] → 96% de Acurácia
+    ↓
+[Exportação] → Modelo .joblib
+    ↓
+[Aplicação Streamlit] → Interface Interativa
+    ↓
+[Usuário] → Resultado Interpretável (Low/Moderate/High + Confiança)
+```
 
 ---
 
@@ -83,6 +177,43 @@ O modelo utiliza um **RandomForestClassifier** treinado com 24.000 amostras e va
 
 ---
 
+## 📊 Interpretando os Resultados
+
+### Níveis de Impacto:
+
+- 🟢 **Low (Baixo)**: Profissão com menor probabilidade de automação pela IA. Geralmente associada a:
+  - Indústrias que requerem interação humana complexa
+  - Níveis de educação mais altos (Master's, PhD)
+  - Tarefas criativas ou estratégicas
+
+- 🟡 **Moderate (Moderado)**: Profissão com automação parcial esperada. Características:
+  - Combinação de tarefas automatizáveis e não-automatizáveis
+  - Necessidade de adaptação profissional
+
+- 🔴 **High (Alto)**: Profissão com maior probabilidade de automação. Geralmente:
+  - Tarefas repetitivas e padronizadas
+  - Indústrias com processos altamente estruturados
+  - Requisitos educacionais mais baixos
+
+### Nível de Confiança:
+
+O gráfico de barras mostra a **probabilidade** atribuída pelo modelo para cada classe. Quanto maior a barra, maior a confiança do modelo naquela previsão. Valores acima de 80% indicam alta confiança.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Python 3.11+** - Linguagem de programação
+- **Streamlit** - Framework web para interface interativa
+- **scikit-learn** - Biblioteca de Machine Learning
+- **pandas** - Manipulação e análise de dados
+- **numpy** - Operações numéricas
+- **matplotlib & seaborn** - Visualização de dados
+- **joblib** - Serialização de modelos
+- **Jupyter Notebook** - Análise exploratória e desenvolvimento
+
+---
+
 ## 📦 Dependências
 
 Todas as dependências estão especificadas no arquivo `requirements.txt`:
@@ -97,55 +228,6 @@ Todas as dependências estão especificadas no arquivo `requirements.txt`:
 
 ---
 
-## 🎯 Funcionalidades
-
-### 1. Previsor Interativo
-O aplicativo permite prever o impacto da IA em profissões com base em:
-
-- **Industry (Indústria)**: IT, Manufacturing, Finance, Healthcare, Education
-- **Required Education (Educação)**: Bachelor's Degree, Master's Degree, Associate Degree, High School, PhD
-- **Median Salary (USD)**: Salário médio em dólares (30.000 - 150.000)
-- **Experience Required (Years)**: Anos de experiência necessários (0-40)
-- **Remote Work Ratio (%)**: Percentual de trabalho remoto (0-100%)
-
-### 2. Análise de Validação do Modelo
-- **Matriz de Confusão**: Visualização da performance do modelo
-- **Métricas Detalhadas**: Acurácia, Precisão, Recall por classe
-- **Feature Importance**: Análise dos fatores mais importantes para o modelo
-
-### 3. Análise Exploratória de Dados (EDA)
-- Comparação entre profissões de **Alto Risco** vs **Baixo Risco**
-- Estatísticas descritivas por nível de impacto
-- Insights sobre padrões identificados pelo modelo
-
----
-
-## 📊 Resultados
-
-O modelo retorna três níveis de impacto:
-
-- 🟢 **Low (Baixo)**: Impacto baixo da IA - profissão com menor probabilidade de automação
-- 🟡 **Moderate (Moderado)**: Impacto moderado da IA - profissão com automação parcial
-- 🔴 **High (Alto)**: Impacto alto da IA - profissão com maior probabilidade de automação
-
-### Métricas de Performance
-
-- **Acurácia**: 96%
-- **Conjunto de Treinamento**: 24.000 amostras
-- **Conjunto de Validação**: 6.000 amostras
-- **Algoritmo**: RandomForestClassifier
-
-### Insights do Modelo
-
-O modelo identificou que os fatores mais importantes para determinar o impacto da IA são:
-
-1. **Indústria** (Industry) - O setor em que a profissão está inserida
-2. **Nível de Educação** (Required Education) - O grau de escolaridade exigido
-3. **Salário Médio** e **Experiência** - Fatores secundários, mas relevantes
-4. **Trabalho Remoto** - Fator complementar na análise
-
----
-
 ## 📁 Estrutura do Projeto
 
 ```
@@ -154,7 +236,7 @@ ML/
 ├── requirements.txt          # Dependências do projeto
 ├── ai_impact_model.joblib    # Modelo treinado (RandomForest) - Git LFS
 ├── ai_job_trends_dataset.csv # Dataset utilizado para treinamento
-├── GS_ML_Impacto_da_IA_no_Mercado_de_Trabalho.ipynb  # Notebook Jupyter com análise e treinamento
+├── GS_ML_Impacto_da_IA_no_Mercado_de_Trabalho.ipynb  # Notebook Jupyter com EDA e treinamento
 ├── setup.bat                 # Script de configuração (Windows)
 ├── run_app.bat              # Script de execução (Windows)
 ├── .gitattributes            # Configuração Git LFS para arquivos grandes
